@@ -36,3 +36,52 @@ public:
         return nodes_map[head];
     }
 };
+
+
+
+// O(N) | O(1)
+
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        Node* new_head = new Node(-1);
+        Node* new_curr = new_head;
+        Node* curr = head;
+
+        // copy each node side-by-side
+        while(curr) {
+            Node* next_node = curr->next;
+
+            Node* new_node = new Node(curr->val);
+            curr->next = new_node;
+            new_node->next = next_node;
+
+            curr = next_node;
+        }
+
+        // assign random pointers for newly added nodes
+        curr = head;
+        while(curr) {
+            if(curr->random) curr->next->random = curr->random->next;
+            curr = curr->next->next;
+        }
+
+        // restore the original list
+        curr = head;
+        Node* pseudo_head = new Node(-1);
+        Node* copy_iter = pseudo_head;
+
+        while(curr) {
+            Node* curr_next = curr->next->next;
+
+            copy_iter->next = curr->next;
+            copy_iter = copy_iter->next;
+
+            curr->next = curr_next;
+            curr = curr_next;
+        }
+
+
+        return pseudo_head->next;;
+    }
+};
